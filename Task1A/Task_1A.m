@@ -82,6 +82,7 @@ function [A,B] = Jacobian_A_B(Mp,l,g,Ma,Rp,Ra,I_arm,I_pendulum_theta,I_pendulum_
   jacobian_matrices = {};
    jacobian_matrices1 = {};
   jacobian_matrix = jacobian(expressions,x);
+  
   jacobian_matrices = subs(jacobian_matrix, {alpha_dot,alpha,theta_dot,theta}, {0,0,0,pi});
   jacobian_matrices=  double(jacobian_matrices);
   A = jacobian_matrices;
@@ -89,6 +90,7 @@ function [A,B] = Jacobian_A_B(Mp,l,g,Ma,Rp,Ra,I_arm,I_pendulum_theta,I_pendulum_
   jacobian_matrices1 = subs(jacobian_matrix1, {alpha_dot,alpha,theta_dot,theta}, {0,0,0,pi});
    jacobian_matrices1=  double(jacobian_matrices1);
     B = jacobian_matrices1;
+   
   ########## ADD YOUR CODE HERE ################
   #{
   Steps : 
@@ -133,9 +135,9 @@ function K = lqr_Rotary_Inverted_Pendulum(A,B)
   D     = [0;0;0;0];          ## Initialise D matrix
    
  Q = [1 0 0 0;    % Cost associated with alpha_dot
-     0 0.2 0 0;      % Cost associated with alpha (emphasizing alpha)
+     0 20 0 0;      % Cost associated with alpha (emphasizing alpha)
      0 0 1 0;   % Cost associated with theta_dot
-     0 0 0 10];    % Cost associated with theta
+     0 0 0 23];    % Cost associated with theta
 
   R     = 1;                  ## Initialise R 
   sys   = ss(A,B,C,D);        ## State Space Model
