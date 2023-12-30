@@ -257,9 +257,7 @@ void encoder(){
   // Calculate the yaw angle in degrees 'yaw_deg' based on the arc length 'arc'
   yaw_deg = 100*(arc/36);
   
-  // Normalize the yaw angle to the range [0, 360)
-  int n = yaw_deg/360;
-  yaw_deg = yaw_deg - n*360;
+
 
 }
 
