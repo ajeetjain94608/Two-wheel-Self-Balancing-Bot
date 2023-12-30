@@ -134,10 +134,10 @@ function K = lqr_Rotary_Inverted_Pendulum(A,B)
           0 0 0 1];           ## Initialise C matrix
   D     = [0;0;0;0];          ## Initialise D matrix
    
- Q = [1 0 0 0;    % Cost associated with alpha_dot
-     0 20 0 0;      % Cost associated with alpha (emphasizing alpha)
-     0 0 1 0;   % Cost associated with theta_dot
-     0 0 0 23];    % Cost associated with theta
+ Q = [5 0 0 0;    % Cost associated with alpha_dot
+     0 75 0 0;      % Cost associated with alpha (emphasizing alpha)
+     0 0 7 0;   % Cost associated with theta_dot
+     0 0 0 200];    % Cost associated with theta
 
   R     = 1;                  ## Initialise R 
   sys   = ss(A,B,C,D);        ## State Space Model
@@ -154,10 +154,10 @@ endfunction
         
 function Rotary_Inverted_Pendulum_main()
   
-  Mp = 0.40 ;                  # mass of the pendulum (Kg)
+  Mp = 0.2 ;                  # mass of the pendulum (Kg)
   l = 0.075 ;                  # length from pendulum's center of mass to pendulum's base/pivot (meter)
   g = 9.81 ;                  # Accelertion due to gravity (kgm/s^2)
-  Ma = 0.40 ;                 # mass of the arm (kg)
+  Ma = 0.587 ;                 # mass of the arm (kg)
  
   r_a = 0.02;                 # radius of arm cylinder (meter)
   r_p = 0.02;                 # radius of pendulum cylinder (meter)

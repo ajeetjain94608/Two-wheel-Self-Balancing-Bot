@@ -27,7 +27,8 @@ float omega_roll = 0, omega_yaw = 0; // angularVelocity of roll and yaw
 float lpx = 0, lpy = 0, lpz = 0, hpx = 0, hpy = 0, hpz = 0; // low pass filtered acceleration in the x, y, and z directions and high pass filtered gyroscope readings in the x, y, and z directions respectively
 int m = 1, n = 1; 
 float x1,x2,x3,x4; //errors
-float k[]={4.006385 ,-2.91623  , 3.590870 ,  46.76041}; //k matrix
+//float k[]={4.006385 ,-2.91623  , 3.590870 ,  46.76041}; //k matrix
+float k[] = {-1.03379 , -0.5 ,  0.82359  , 9.36946};
 float U,U_new; //pwm for dc motor 
 float yaw_setpoint = 0;
 typedef struct struct_message {
@@ -35,7 +36,6 @@ typedef struct struct_message {
  int back;
  int left;
  int right;
- int x ;
  int sw1;
  int sw2;
  int sw3;
@@ -75,15 +75,14 @@ void loop() {
   } 
 
   encoder();
-  remote_control();
- float yaw_deg1 = yaw_deg + yaw_setpoint;
   x1= omega_yaw;
-  x2 = yaw_deg1;
+  x2 =   yaw_setpoint - yaw_deg;
   x3 = omega_roll;
   x4 = roll_deg;
-  U =  k[0]*x1 + k[1]*x2 + k[2]*x3 + k[3]*x4;
-  U_new = constrain(U,-255,255);
+  U =  -k[0]*x1 - k[1]*x2 + k[2]*x3 + k[3]*x4;
+  U_new = constrain(U*5,-255,255);
   motor_control(U_new);
+  remote_control();
 
 }
 
@@ -207,7 +206,6 @@ void mpu_int(){
   
   // Apply the complimentary filter to calculate the roll angle in degrees
   complimentary_filter_roll(); 
-  complimentary_filter_roll(); 
   }
 
 /////////////////////////////////////////////
@@ -280,8 +278,17 @@ void encoder(){
   yaw_deg = 100*(arc/36);
   
   // Normalize the yaw angle to the range [0, 360)
-  int n = yaw_deg/360;
+ /* int n = yaw_deg/360;
   yaw_deg = yaw_deg - n*360;
+    // Reset the encoder count if yaw_deg is 359 or -359
+  if (yaw_deg >= 359 || yaw_deg <= -359) {
+    DC_Encoder.write(0); // Reset the encoder count to 0
+    old_ticks = 0; // Reset the old_ticks to 0
+    ticks = 0; 
+  }*/
+
+
+  
 }
 
 /**
@@ -307,7 +314,7 @@ void bo_motor_init(){
  * Example Call: forward();
  */
 void forward(){
-  analogWrite(enB, 170);
+  analogWrite(enB, 180);
   digitalWrite(in3, LOW);
   digitalWrite(in4, HIGH);  
 }
@@ -320,7 +327,7 @@ void forward(){
  * Example Call: backward();
  */
 void backward(){
-  analogWrite(enB, 130);
+  analogWrite(enB, 150);
   digitalWrite(in3, HIGH);
   digitalWrite(in4, LOW);  
 }
@@ -345,11 +352,11 @@ void stop(){
  * Example Call: remote_control();
  */
 void remote_control(){
-  if(data.left==1){
-  yaw_setpoint = data.x;
+ if(data.left==1){
+  yaw_setpoint = yaw_setpoint + 0.1;
  }
  else if(data.right==1){
-  yaw_setpoint = data.x;
+   yaw_setpoint = yaw_setpoint - 0.1;
  }
 
    if( data.front == 1 ){

@@ -22,7 +22,6 @@ typedef struct struct_message {
  int back=0;
  int left=0;
  int right=0;
- int x;
  int sw1=0;
  int sw2=0;
  int sw3=0;
@@ -61,19 +60,16 @@ void loop() {
    y_value = analogRead(VRy);
    
    // Check x_value and set data
-  if (x_value > 600) {
+  if (x_value > 900) {
     data.left = 1;
     data.right = 0;
-    data.x = map(x_value, 1023, 600, -110,0 );
-   } else if (x_value < 450) {
-     data.left = 1;
-     data.right = 0;
-     data.x = map(x_value, 450, 0, 0,110 );
+   } else if (x_value < 200) {
+     data.left = 0;
+     data.right = 1;
    
    } else {
      data.left = 0;
      data.right = 0;
-     data.x = 0;
    } 
 
 
@@ -81,7 +77,7 @@ void loop() {
    if (y_value > 900) {
      data.front = 0;
      data.back = 1;
-   } else if (y_value < 300) {
+   } else if (y_value < 200) {
      data.front = 1;
      data.back = 0;
    } else {
@@ -93,7 +89,6 @@ void loop() {
    data.sw1 = !digitalRead(SW);
    data.sw2 = !digitalRead(button1);
    data.sw3 = !digitalRead(button2);
-   Serial.println(data.x);
    // Write data to radio
    radio.write( (uint8_t *) &data, sizeof(struct_message));
 }

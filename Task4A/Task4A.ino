@@ -23,7 +23,9 @@ float omega_roll = 0, omega_yaw = 0; // angularVelocity of roll and yaw
 float lpx = 0, lpy = 0, lpz = 0, hpx = 0, hpy = 0, hpz = 0; // low pass filtered acceleration in the x, y, and z directions and high pass filtered gyroscope readings in the x, y, and z directions respectively
 int m = 1, n = 1; 
 float x1,x2,x3,x4; //errors
-float k[]={4.006385 ,-2.51623  , 3.590870 ,  46.76041}; //k matrix
+//float k[]={4.006385 ,-9.71623  , 3.590870 ,  46.76041}; //k matrix
+//float k[]={-2.006385 ,-9.31623  ,1.890870 ,  70.76041};
+float k[] = {-1.03379 , -0.7 ,  0.82359  , 9.36946};
 float U,U_new; //pwm for dc motor 
 
 ////////////////////////////////////////////
@@ -59,10 +61,9 @@ void loop() {
   x2 = yaw_deg;
   x3 = omega_roll;
   x4 = roll_deg;
-  U =  k[0]*x1 + k[1]*x2 + k[2]*x3 + k[3]*x4;
-  U_new = constrain(U,-255,255);
+  U = - k[0]*x1 + k[1]*x2 + k[2]*x3 + k[3]*x4;
+  U_new = constrain(U*5,-255,255);
   motor_control(U_new);
-
 }
 
 ///////////////////////////////////////////
@@ -185,7 +186,6 @@ void mpu_int(){
   
   // Apply the complimentary filter to calculate the roll angle in degrees
   complimentary_filter_roll(); 
-  complimentary_filter_roll(); 
   }
 
 /////////////////////////////////////////////
@@ -260,4 +260,12 @@ void encoder(){
   // Normalize the yaw angle to the range [0, 360)
   int n = yaw_deg/360;
   yaw_deg = yaw_deg - n*360;
+
+  // Reset the encoder count if yaw_deg is 359 or -359
+  if (yaw_deg >= 359 || yaw_deg <= -359) {
+    DC_Encoder.write(0); // Reset the encoder count to 0
+    old_ticks = 0; // Reset the old_ticks to 0
+    ticks = 0;
+  }
 }
+
