@@ -14,7 +14,7 @@ RF24 radio(10, 8);
 const int encoderPinA = 2;
 const int encoderPinB = 3;
 MPU6050 mpu(Wire);
-Encoder DC_Encoder(2,3);
+Encoder DC_Encoder(encoderPinA,encoderPinB);
 long old_ticks = -999; //to store ticks of encoder
 const byte add_1 = 5;
 const byte add_2 = 10;
@@ -27,8 +27,7 @@ float omega_roll = 0, omega_yaw = 0; // angularVelocity of roll and yaw
 float lpx = 0, lpy = 0, lpz = 0, hpx = 0, hpy = 0, hpz = 0; // low pass filtered acceleration in the x, y, and z directions and high pass filtered gyroscope readings in the x, y, and z directions respectively
 int m = 1, n = 1; 
 float x1,x2,x3,x4; //errors
-//float k[]={-4.006385 ,-2.91623  , 3.590870 ,  46.76041}; //k matrix
-float k[] = {-1.03379 , -0.5 ,  0.82359  , 9.36946};
+float k[] = {-1.03379 , -0.5 ,  0.82359  , 9.36946}; //k matrix
 float U,U_new; //pwm for dc motor 
 float yaw_setpoint = 0;
 typedef struct struct_message {
@@ -42,6 +41,7 @@ typedef struct struct_message {
 } struct_message;
 
 struct_message data; //object of struct_message
+
 ////////////////////////////////////////////
 
 void setup() {
@@ -85,7 +85,6 @@ void loop() {
 
 
 }
-
 ///////////////////////////////////////////
 // Function Name: low_pass_filter
 // Input: Ax, Ay, Az - These are the input parameters representing the acceleration in the x, y, and z directions respectively.
@@ -183,7 +182,6 @@ void complimentary_filter_roll(){
   roll_deg = (1 - comp_alpha) * (roll_deg + g[0] * dT) + (comp_alpha) * (atan(a[1] / sqrt(pow(a[0], 2) + pow(a[2], 2)))) * (180 / pi);
     // Set the values of 'omega_roll' and 'omega_yaw' based on the gyroscope readings
   omega_roll = g[0];
-
   omega_yaw = g[2];
 }
 
