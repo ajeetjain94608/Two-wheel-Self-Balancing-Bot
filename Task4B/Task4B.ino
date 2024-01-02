@@ -27,8 +27,8 @@ float omega_roll = 0, omega_yaw = 0; // angularVelocity of roll and yaw
 float lpx = 0, lpy = 0, lpz = 0, hpx = 0, hpy = 0, hpz = 0; // low pass filtered acceleration in the x, y, and z directions and high pass filtered gyroscope readings in the x, y, and z directions respectively
 int m = 1, n = 1; 
 float x1,x2,x3,x4; //errors
-float k[]={-4.006385 ,-2.91623  , 3.590870 ,  46.76041}; //k matrix
-//float k[] = {-1.03379 , -0.5 ,  0.82359  , 9.36946};
+//float k[]={-4.006385 ,-2.91623  , 3.590870 ,  46.76041}; //k matrix
+float k[] = {-1.03379 , -0.5 ,  0.82359  , 9.36946};
 float U,U_new; //pwm for dc motor 
 float yaw_setpoint = 0;
 typedef struct struct_message {
@@ -80,7 +80,7 @@ void loop() {
   x3 = omega_roll;
   x4 = roll_deg;
   U =  -k[0]*x1 - k[1]*x2 + k[2]*x3 + k[3]*x4;
-  U_new = constrain(U,-255,255);
+  U_new = constrain(U*5,-255,255);
   motor_control(U_new);
 
 
@@ -353,10 +353,10 @@ void stop(){
  */
 void remote_control(){
  if(data.left==1){
-  yaw_setpoint = yaw_setpoint + 0.1;
+  yaw_setpoint = yaw_setpoint + 0.15;
  }
  else if(data.right==1){
-   yaw_setpoint = yaw_setpoint - 0.1;
+   yaw_setpoint = yaw_setpoint - 0.15;
  }
 
    if( data.front == 1 ){
