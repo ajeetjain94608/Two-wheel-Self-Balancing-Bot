@@ -27,7 +27,7 @@ float omega_roll = 0, omega_yaw = 0; // angularVelocity of roll and yaw
 float lpx = 0, lpy = 0, lpz = 0, hpx = 0, hpy = 0, hpz = 0; // low pass filtered acceleration in the x, y, and z directions and high pass filtered gyroscope readings in the x, y, and z directions respectively
 int m = 1, n = 1; 
 float x1,x2,x3,x4; //errors
-float k[] = {-1.03379 , -0.5 ,  0.82359  , 9.36946}; //k matrix
+float k[] = {-1.003139 , -0.50000  , 0.953048 ,  6.973991}; //k matrix
 float U,U_new; //pwm for dc motor 
 float yaw_setpoint = 0;
 typedef struct struct_message {
@@ -76,10 +76,10 @@ void loop() {
   remote_control();
   encoder();
   x1= omega_yaw;
-  x2 =   yaw_setpoint - yaw_deg;
+  x2 =  yaw_deg - yaw_setpoint ;
   x3 = omega_roll;
   x4 = roll_deg;
-  U =  -k[0]*x1 - k[1]*x2 + k[2]*x3 + k[3]*x4;
+  U =  -k[0]*x1  + k[1]*x2 + k[2]*x3 + k[3]*x4;
   U_new = constrain(U*5,-255,255);
   motor_control(U_new);
 
@@ -312,7 +312,7 @@ void bo_motor_init(){
  * Example Call: forward();
  */
 void forward(){
-  analogWrite(enB, 250);
+  analogWrite(enB, 180);
   digitalWrite(in3, LOW);
   digitalWrite(in4, HIGH);  
 }
@@ -325,7 +325,7 @@ void forward(){
  * Example Call: backward();
  */
 void backward(){
-  analogWrite(enB, 250);
+  analogWrite(enB, 180);
   digitalWrite(in3, HIGH);
   digitalWrite(in4, LOW);  
 }
