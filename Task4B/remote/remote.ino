@@ -7,8 +7,8 @@ RF24 radio(10, 9);
 // Define constants
 const byte add_1 = 5;
 const byte add_2 = 10;
-const int VRx = A1; // Analog pin for x-axis 
-const int VRy = A2; // Analog pin for y-axis
+const int VRx = A6; // Analog pin for x-axis 
+const int VRy = A7; // Analog pin for y-axis
 const int SW  = 8;  // Digital pin for the button
 const int button1 = 6;
 const int button2 = 5;

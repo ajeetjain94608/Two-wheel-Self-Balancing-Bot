@@ -275,18 +275,6 @@ void encoder(){
   // Calculate the yaw angle in degrees 'yaw_deg' based on the arc length 'arc'
   yaw_deg = 100*(arc/36);
   
-  // Normalize the yaw angle to the range [0, 360)
- /* int n = yaw_deg/360;
-  yaw_deg = yaw_deg - n*360;
-    // Reset the encoder count if yaw_deg is 359 or -359
-  if (yaw_deg >= 359 || yaw_deg <= -359) {
-    DC_Encoder.write(0); // Reset the encoder count to 0
-    old_ticks = 0; // Reset the old_ticks to 0
-    ticks = 0; 
-  }*/
-
-
-  
 }
 
 /**
