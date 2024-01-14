@@ -300,7 +300,7 @@ void bo_motor_init(){
  * Example Call: forward();
  */
 void forward(){
-  analogWrite(enB, 180);
+  analogWrite(enB, 255);
   digitalWrite(in3, LOW);
   digitalWrite(in4, HIGH);  
 }
@@ -339,10 +339,10 @@ void stop(){
  */
 void remote_control(){
  if(data.left==1){
-  yaw_setpoint = yaw_setpoint + 0.15;
+  yaw_setpoint = yaw_setpoint + 0.3;
  }
  else if(data.right==1){
-   yaw_setpoint = yaw_setpoint - 0.15;
+   yaw_setpoint = yaw_setpoint - 0.3;
  }
 
    if( data.front == 1 ){
@@ -352,6 +352,6 @@ void remote_control(){
    backward();
  }
  else {
-  stop();
+  stop(); 
  }
 }
