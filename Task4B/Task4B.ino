@@ -27,7 +27,7 @@ float omega_roll = 0, omega_yaw = 0; // angularVelocity of roll and yaw
 float lpx = 0, lpy = 0, lpz = 0, hpx = 0, hpy = 0, hpz = 0; // low pass filtered acceleration in the x, y, and z directions and high pass filtered gyroscope readings in the x, y, and z directions respectively
 int m = 1, n = 1; 
 float x1,x2,x3,x4; //errors
-float k[] = {-1.003139 , -0.50000  , 0.953048 ,  6.973991}; //k matrix
+float k[] = {-1.005139 , -0.850  , 0.973048 ,  7.973991}; //k matrix
 float U,U_new; //pwm for dc motor 
 float yaw_setpoint = 0;
 typedef struct struct_message {
@@ -273,7 +273,7 @@ void encoder(){
   float arc = (theta*2*pi*3)/360;
   
   // Calculate the yaw angle in degrees 'yaw_deg' based on the arc length 'arc'
-  yaw_deg = 100*(arc/36);
+  yaw_deg = 100*(arc/34);
   
 }
 
@@ -339,10 +339,10 @@ void stop(){
  */
 void remote_control(){
  if(data.left==1){
-  yaw_setpoint = yaw_setpoint + 0.3;
+  yaw_setpoint = yaw_setpoint + 0.25;
  }
  else if(data.right==1){
-   yaw_setpoint = yaw_setpoint - 0.3;
+   yaw_setpoint = yaw_setpoint - 0.25;
  }
 
    if( data.front == 1 ){

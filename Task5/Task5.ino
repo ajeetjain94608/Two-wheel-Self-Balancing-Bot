@@ -27,7 +27,7 @@ float omega_roll = 0, omega_yaw = 0; // angularVelocity of roll and yaw
 float lpx = 0, lpy = 0, lpz = 0, hpx = 0, hpy = 0, hpz = 0; // low pass filtered acceleration in the x, y, and z directions and high pass filtered gyroscope readings in the x, y, and z directions respectively
 int m = 1, n = 1; 
 float x1,x2,x3,x4; //errors
-float k[] = {-1.003139 , -0.50000  , 0.953048 ,  6.973991}; //k matrix
+float k[] = {-1.005139 , -1.950  , 0.973048 ,  7.973991}; //k matrix
 float U,U_new; //pwm for dc motor 
 float yaw_setpoint = 0;
 typedef struct struct_message {
@@ -41,7 +41,50 @@ typedef struct struct_message {
 } struct_message;
 
 struct_message data; //object of struct_message
-
+class BEEPER
+{
+// Class Member Variables
+// These are initialized at startup
+int BuzzerPin; // the number of the LED pin
+long OnTime; // milliseconds of on-time
+long OffTime; // milliseconds of off-time
+// These maintain the current state
+int BuzzerState; // BuzzerState used to set the LED
+unsigned long previousMillis; // will store last time LED was updated
+// Constructor - creates a BEEPER
+// and initializes the member variables and state
+public:
+BEEPER(int pin, long on, long off)
+{
+BuzzerPin = pin;
+pinMode(BuzzerPin, OUTPUT);
+OnTime = on;
+OffTime = off;
+BuzzerState = LOW;
+previousMillis = 0;
+}
+void Update()
+{
+// check to see if it's time to change the state of the LED
+unsigned long currentMillis = millis();
+if((BuzzerState == HIGH) && (currentMillis - previousMillis >= OnTime))
+{
+BuzzerState = LOW; // Turn it off
+previousMillis = currentMillis; // Remember the time
+digitalWrite(BuzzerPin, BuzzerState); // Update the actual LED
+}
+else if ((BuzzerState == LOW) && (currentMillis - previousMillis >= OffTime))
+{
+BuzzerState = HIGH; // turn it on
+previousMillis = currentMillis; // Remember the time
+digitalWrite(BuzzerPin, BuzzerState); // Update the actual LED
+}
+}  
+void OFF(){
+  digitalWrite(BuzzerPin, LOW);
+}
+};
+BEEPER buzzer(7, 1000, 1000);
 ////////////////////////////////////////////
 
 void setup() {
@@ -64,7 +107,6 @@ void setup() {
       mpu.calcOffsets();
       dc_motor_init();
       bo_motor_init();
-
 }
 
 ////////////////////////////////////////
@@ -83,7 +125,12 @@ void loop() {
   U =  -k[0]*x1  + k[1]*x2 + k[2]*x3 + k[3]*x4;
   U_new = constrain(U*5,-255,255);
   motor_control(U_new);
-
+  if(data.sw2==HIGH){
+     buzzer.Update();
+  }
+  else {
+   buzzer.OFF();
+  }
 
 }
 ///////////////////////////////////////////
@@ -274,7 +321,7 @@ void encoder(){
   float arc = (theta*2*pi*3)/360;
   
   // Calculate the yaw angle in degrees 'yaw_deg' based on the arc length 'arc'
-  yaw_deg = 100*(arc/36);
+  yaw_deg = 100*(arc/34);
   
 }
 
