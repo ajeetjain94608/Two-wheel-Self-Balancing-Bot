@@ -10,6 +10,13 @@
 #define enB 5
 #define in3 9
 #define in4 4
+#define BuzzerPin 7
+#define red A0
+#define green A1
+const int analogInPinleft = A6;
+const int analogInPinright = A7;
+int sensorValueleft = 0;
+int sensorValueright = 0;
 RF24 radio(10, 8);
 const int encoderPinA = 2;
 const int encoderPinB = 3;
@@ -27,7 +34,7 @@ float omega_roll = 0, omega_yaw = 0; // angularVelocity of roll and yaw
 float lpx = 0, lpy = 0, lpz = 0, hpx = 0, hpy = 0, hpz = 0; // low pass filtered acceleration in the x, y, and z directions and high pass filtered gyroscope readings in the x, y, and z directions respectively
 int m = 1, n = 1; 
 float x1,x2,x3,x4; //errors
-float k[] = {-1.005139 , -1.950  , 0.973048 ,  7.973991}; //k matrix
+float k[] = {-1.005139 , -0.850  , 0.973048 ,  7.973991}; //k matrix
 float U,U_new; //pwm for dc motor 
 float yaw_setpoint = 0;
 typedef struct struct_message {
@@ -45,7 +52,6 @@ class BEEPER
 {
 // Class Member Variables
 // These are initialized at startup
-int BuzzerPin; // the number of the LED pin
 long OnTime; // milliseconds of on-time
 long OffTime; // milliseconds of off-time
 // These maintain the current state
@@ -54,9 +60,9 @@ unsigned long previousMillis; // will store last time LED was updated
 // Constructor - creates a BEEPER
 // and initializes the member variables and state
 public:
-BEEPER(int pin, long on, long off)
+BEEPER(long on, long off)
 {
-BuzzerPin = pin;
+
 pinMode(BuzzerPin, OUTPUT);
 OnTime = on;
 OffTime = off;
@@ -84,11 +90,12 @@ void OFF(){
   digitalWrite(BuzzerPin, LOW);
 }
 };
-BEEPER buzzer(7, 1000, 1000);
+BEEPER buzzer(1000, 1000);
+BEEPER buzzer1(5000, 10000);
 ////////////////////////////////////////////
 
 void setup() {
-      Serial.begin(9600);
+  Serial.begin(9600);
       int result = radio.begin();
       if (result) {
         Serial.println("NRF module Working");
@@ -107,6 +114,11 @@ void setup() {
       mpu.calcOffsets();
       dc_motor_init();
       bo_motor_init();
+      digitalWrite(BuzzerPin, HIGH);
+      delay(1000);
+      digitalWrite(BuzzerPin, LOW);
+     analogWrite(red, 0);
+     analogWrite(green, 0);
 }
 
 ////////////////////////////////////////
@@ -114,7 +126,7 @@ void setup() {
 void loop() {
   mpu_int();
   if (radio.available()) {
-     radio.read((uint8_t *) &data, sizeof(struct_message));
+    radio.read((uint8_t *) &data, sizeof(struct_message));
   } 
   remote_control();
   encoder();
@@ -125,11 +137,18 @@ void loop() {
   U =  -k[0]*x1  + k[1]*x2 + k[2]*x3 + k[3]*x4;
   U_new = constrain(U*5,-255,255);
   motor_control(U_new);
-  if(data.sw2==HIGH){
-     buzzer.Update();
+   
+  if(data.sw2 == HIGH){
+    buzzer1.Update();
+  }
+  else if(data.sw3 == HIGH){
+    buzzer.Update();
+    cs();
   }
   else {
-   buzzer.OFF();
+    buzzer.OFF();
+    analogWrite(red, 0);
+    analogWrite(green, 0);
   }
 
 }
@@ -387,10 +406,10 @@ void stop(){
  */
 void remote_control(){
  if(data.left==1){
-  yaw_setpoint = yaw_setpoint + 0.3;
+  yaw_setpoint = yaw_setpoint + 0.25;
  }
  else if(data.right==1){
-   yaw_setpoint = yaw_setpoint - 0.3;
+   yaw_setpoint = yaw_setpoint - 0.25;
  }
 
    if( data.front == 1 ){
@@ -402,4 +421,19 @@ void remote_control(){
  else {
   stop(); 
  }
+}
+
+
+void cs(){
+   sensorValueleft = analogRead(analogInPinleft);
+   sensorValueright = analogRead(analogInPinright);
+   Serial.print(sensorValueleft);
+   if( sensorValueleft < 501 || sensorValueright < 501){
+     analogWrite(red, 255);
+
+   }
+   else if( sensorValueleft > 506 || sensorValueright > 506){
+     analogWrite(green, 255);
+
+   }
 }
