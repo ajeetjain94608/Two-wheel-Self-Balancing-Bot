@@ -7,11 +7,11 @@ RF24 radio(10, 9);
 // Define constants
 const byte add_1 = 5;
 const byte add_2 = 10;
-const int VRx = A6; // Analog pin for x-axis 
-const int VRy = A7; // Analog pin for y-axi   s
-const int SW  = 8;  // Digital pin for the button
-const int button1 = 6;
-const int button2 = 5;
+const int VRx = A7; // Analog pin for x-axis 
+const int VRy = A6; // Analog pin for y-axi   s
+const int SW  = 6;  // Digital pin for the button
+const int button1 = 8;
+const int button2 = 7;
 
 // Define variables
 int x_value, y_value; 
@@ -86,9 +86,9 @@ void loop() {
    }
    
    // Read digital values and set data
-   data.sw1 = !digitalRead(SW);
-   data.sw2 = !digitalRead(button1);
-   data.sw3 = !digitalRead(button2);
+   data.sw1 = !digitalRead(button1);
+   data.sw2 = !digitalRead(button2);
+   data.sw3 = !digitalRead(SW);
    // Write data to radio
    radio.write( (uint8_t *) &data, sizeof(struct_message));
 }
