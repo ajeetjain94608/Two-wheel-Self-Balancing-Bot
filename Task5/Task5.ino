@@ -423,17 +423,26 @@ void remote_control(){
  }
 }
 
-
-void cs(){
-   sensorValueleft = analogRead(analogInPinleft);
-   sensorValueright = analogRead(analogInPinright);
-   Serial.print(sensorValueleft);
-   if( sensorValueleft < 501 || sensorValueright < 501){
-     analogWrite(red, 255);
-
-   }
-   else if( sensorValueleft > 506 || sensorValueright > 506){
-     analogWrite(green, 255);
-
-   }
+/**
+ * Function Name: cs
+ * Input: None (parameters are not passed directly to the function, but are read from global variables)
+ * Output: None (the function does not return a value, but modifies the state of two LEDs)
+ * Logic: This function reads values from two hall effect sensors. If either sensor reads a value less than 501, it turns on a red LED. If either sensor reads a value greater than 506, it turns on a green LED.
+ * Example Call: cs();
+*/
+void cs() {
+    // Read the analog value from the left sensor
+    sensorValueleft = analogRead(analogInPinleft);
+    // Read the analog value from the right sensor
+    sensorValueright = analogRead(analogInPinright);
+    // If either sensor reads a value less than 501
+    if (sensorValueleft < 501 || sensorValueright < 501) {
+        // Turn on the red LED
+        analogWrite(red, 255);
+    }
+    // If either sensor reads a value greater than 506
+    else if (sensorValueleft > 506 || sensorValueright > 506) {
+        // Turn on the green LED
+        analogWrite(green, 255);
+    }
 }
