@@ -130,6 +130,7 @@ void loop() {
   } 
   remote_control();
   encoder();
+  // Error calculations
   x1= omega_yaw;
   x2 =  yaw_deg - yaw_setpoint ;
   x3 = omega_roll;
@@ -137,7 +138,6 @@ void loop() {
   U =  -k[0]*x1  + k[1]*x2 + k[2]*x3 + k[3]*x4;
   U_new = constrain(U*5,-255,255);
   motor_control(U_new);
-   
   if(data.sw2 == HIGH){
     buzzer1.Update();
   }
@@ -367,7 +367,7 @@ void bo_motor_init(){
  * Example Call: forward();
  */
 void forward(){
-  analogWrite(enB, 255);
+  analogWrite(enB, 200);
   digitalWrite(in3, LOW);
   digitalWrite(in4, HIGH);  
 }
@@ -380,7 +380,7 @@ void forward(){
  * Example Call: backward();
  */
 void backward(){
-  analogWrite(enB, 180);
+  analogWrite(enB, 200);
   digitalWrite(in3, HIGH);
   digitalWrite(in4, LOW);  
 }
