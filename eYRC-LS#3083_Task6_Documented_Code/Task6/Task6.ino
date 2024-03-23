@@ -165,12 +165,14 @@ void loop() {
         buzzer1.Update();
     }
     else if (data.sw1 == HIGH) {
+       
         cs();
     }
     else {
         buzzer.OFF();
         analogWrite(red, 0);
         analogWrite(green, 0);
+        
     }
     
    
@@ -474,6 +476,11 @@ void cs() {
         green1 = 1;
         
     }
+    else{
+      red1 = 0;
+      green1 = 0;
+    }
+
     if(red1 == 1){
        buzzer.Update();
     }

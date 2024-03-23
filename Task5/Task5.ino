@@ -172,6 +172,7 @@ void loop() {
         buzzer.OFF();
         analogWrite(red, 0);
         analogWrite(green, 0);
+        
     }
     
    
@@ -475,6 +476,11 @@ void cs() {
         green1 = 1;
         
     }
+    else{
+      red1 = 0;
+      green1 = 0;
+    }
+
     if(red1 == 1){
        buzzer.Update();
     }
